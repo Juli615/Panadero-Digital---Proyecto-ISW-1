@@ -2,6 +2,8 @@ package com.example.panaderodigitalback.modelo;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = Usuario.TABLE_NAME)
 public class Usuario {
@@ -12,6 +14,14 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
     private Long id;
+
+    // Relacion uno a uno con la tabla Proveedor
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Proveedor proveedor;
+
+    // Relacion uno a muchos con la tabla Pedido
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Pedido> pedidos;
 
     @Column(name = "nombres", length = 100)
     private String nombres;
@@ -43,7 +53,9 @@ public class Usuario {
     // Constructores
     public Usuario() {}
 
-    public Usuario(String nombres, String apellidos, String numeroDocumento, String correoElectronico, String password, String celular, Rol rol) {
+    public Usuario(Proveedor proveedor, List<Pedido> pedidos, String nombres, String apellidos, String numeroDocumento, String correoElectronico, String password, String celular, Rol rol) {
+        this.proveedor = proveedor;
+        this.pedidos = pedidos;
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.numeroDocumento = numeroDocumento;

@@ -2,6 +2,8 @@ package com.example.panaderodigitalback.modelo;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = Proveedor.TABLE_NAME)
 public class Proveedor {
@@ -17,6 +19,10 @@ public class Proveedor {
     @MapsId
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
+
+    // Relacion uno a muchos con la tabla Pedido
+    @OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Pedido> pedidos;
 
     @Column(name = "nombre_empresa", length = 150)
     private String nombreEmpresa;
@@ -37,8 +43,9 @@ public class Proveedor {
     public Proveedor() {
     }
 
-    public Proveedor(Usuario usuario, String nombreEmpresa, String correoElectronico, String nit, String telefono, String direccion) {
+    public Proveedor(Usuario usuario, List<Pedido> pedidos, String nombreEmpresa, String correoElectronico, String nit, String telefono, String direccion) {
         this.usuario = usuario;
+        this.pedidos = pedidos;
         this.nombreEmpresa = nombreEmpresa;
         this.correoElectronico = correoElectronico;
         this.nit = nit;
@@ -61,6 +68,14 @@ public class Proveedor {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
     }
 
     public String getNombreEmpresa() {
