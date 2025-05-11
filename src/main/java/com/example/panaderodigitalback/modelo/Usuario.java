@@ -1,5 +1,6 @@
 package com.example.panaderodigitalback.modelo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class Usuario {
 
     // Relacion uno a uno con la tabla Proveedor
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore // Ignora la propiedad 'proveedor' al serializar el Usuario
     private Proveedor proveedor;
 
     // Relacion uno a muchos con la tabla Pedido

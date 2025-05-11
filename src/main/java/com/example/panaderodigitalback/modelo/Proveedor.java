@@ -1,5 +1,6 @@
 package com.example.panaderodigitalback.modelo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -21,7 +22,8 @@ public class Proveedor {
     private Usuario usuario;
 
     // Relacion uno a muchos con la tabla Pedido
-    @OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "proveedor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Pedido> pedidos;
 
     @Column(name = "nombre_empresa", length = 150)
