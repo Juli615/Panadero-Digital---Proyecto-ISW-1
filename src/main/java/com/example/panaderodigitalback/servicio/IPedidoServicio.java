@@ -5,6 +5,7 @@ import com.example.panaderodigitalback.modelo.Pedido;
 import java.util.List;
 
 public interface IPedidoServicio {
+
     // Buscar todos los pedidos
     List<Pedido> buscarPedidos();
 

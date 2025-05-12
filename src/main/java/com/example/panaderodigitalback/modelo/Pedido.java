@@ -1,5 +1,6 @@
 package com.example.panaderodigitalback.modelo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -27,7 +28,8 @@ public class Pedido {
     private Proveedor proveedor;
 
     // Relacion uno a muchos con la tabla Detalle_Pedido
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    @JsonIgnore // Se coloca porque si no genera un bucle en la consulta y cuando se muestra es extensa
     private List<DetallePedido> detallesPedido;
 
     @Enumerated(EnumType.STRING)

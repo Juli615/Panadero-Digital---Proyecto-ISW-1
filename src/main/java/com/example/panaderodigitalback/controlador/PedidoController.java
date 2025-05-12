@@ -29,7 +29,7 @@ public class PedidoController {
     }
 
     // Agregar un pedido
-    @PostMapping("/")
+   @PostMapping("/")
     public ResponseEntity<Pedido> agregarPedido(@RequestBody Pedido pedido) {
         Pedido nuevoPedido = pedidoServicio.guardarPedido(pedido);
         return new ResponseEntity<>(nuevoPedido, HttpStatus.CREATED);
