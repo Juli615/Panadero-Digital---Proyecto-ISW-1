@@ -12,16 +12,14 @@ public class Proveedor {
     public static final String TABLE_NAME = "Proveedor";
 
     @Id
-    @Column(name = "id_usuario")
-    private Long idUsuario;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Genera su propio ID
+    @Column(name = "id_proveedor")
+    private Long idProveedor;
 
-    //Relacion uno a uno con la tabla Usuario
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "id_usuario")
+    @ManyToOne // Muchos Proveedores pueden estar asociados a un Usuario
+    @JoinColumn(name = "id_usuario") // Clave foránea
     private Usuario usuario;
 
-    // Relacion uno a muchos con la tabla Pedido
     @OneToMany(mappedBy = "proveedor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Pedido> pedidos;
@@ -41,7 +39,7 @@ public class Proveedor {
     @Column(name = "direccion", length = 200)
     private String direccion;
 
-    // Constructores
+    // Constructores, Getters y Setters
     public Proveedor() {
     }
 
@@ -55,13 +53,12 @@ public class Proveedor {
         this.direccion = direccion;
     }
 
-    // Getters y setters
-    public Long getIdUsuario() {
-        return idUsuario;
+    public Long getIdProveedor() {
+        return idProveedor;
     }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setIdProveedor(Long idProveedor) {
+        this.idProveedor = idProveedor;
     }
 
     public Usuario getUsuario() {

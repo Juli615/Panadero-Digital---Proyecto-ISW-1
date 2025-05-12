@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProveedorRepositorio extends JpaRepository<Proveedor, Long> {
-    @Modifying
+    /*@Modifying
     @Query("DELETE FROM Proveedor p WHERE p.idUsuario = :id")
-    void eliminarProveedorPorId(@Param("id") Long id);
+    void eliminarProveedorPorId(@Param("id") Long id);*/
 }

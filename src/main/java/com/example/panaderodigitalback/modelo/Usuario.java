@@ -16,13 +16,10 @@ public class Usuario {
     @Column(name = "id_usuario")
     private Long id;
 
-    // Relacion uno a uno con la tabla Proveedor
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore // Ignora la propiedad 'proveedor' al serializar el Usuario
-    private Proveedor proveedor;
+    // Ya no hay relación con Proveedor aquí
 
-    // Relacion uno a muchos con la tabla Pedido
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Pedido> pedidos;
 
     @Column(name = "nombres", length = 100)
@@ -47,16 +44,15 @@ public class Usuario {
     @Column(name = "rol")
     private Rol rol;
 
-    //Enumeración para el rol de usuario
+    // Enumeración para el rol de usuario
     public enum Rol {
         admin, vendedor, proveedor
     }
 
-    // Constructores
+    // Constructores, Getters y Setters (mantener los que ya tienes, pero sin Proveedor)
     public Usuario() {}
 
-    public Usuario(Proveedor proveedor, List<Pedido> pedidos, String nombres, String apellidos, String numeroDocumento, String correoElectronico, String password, String celular, Rol rol) {
-        this.proveedor = proveedor;
+    public Usuario(List<Pedido> pedidos, String nombres, String apellidos, String numeroDocumento, String correoElectronico, String password, String celular, Rol rol) {
         this.pedidos = pedidos;
         this.nombres = nombres;
         this.apellidos = apellidos;
@@ -67,13 +63,20 @@ public class Usuario {
         this.rol = rol;
     }
 
-    // Getters y setters
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
     }
 
     public String getNombres() {

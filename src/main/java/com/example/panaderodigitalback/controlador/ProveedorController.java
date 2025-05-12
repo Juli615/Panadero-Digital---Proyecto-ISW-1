@@ -3,7 +3,14 @@ package com.example.panaderodigitalback.controlador;
 import com.example.panaderodigitalback.modelo.Pedido;
 import com.example.panaderodigitalback.modelo.Proveedor;
 import com.example.panaderodigitalback.modelo.Usuario;
+import com.example.panaderodigitalback.repositorio.ProveedorRepositorio;
+import com.example.panaderodigitalback.repositorio.UsuarioRepositorio;
 import com.example.panaderodigitalback.servicio.ProveedorServicio;
+import com.example.panaderodigitalback.servicio.UsuarioServicio;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +21,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/proveedores")
 public class ProveedorController {
+
+    private static final Logger log = LoggerFactory.getLogger(ProveedorController.class); // Agrega esta línea
 
     @Autowired
     private ProveedorServicio proveedorServicio;
@@ -36,7 +45,7 @@ public class ProveedorController {
         }
     }
 
-    // Agregar un proveedor
+    //Agregar un proveedor
     @PostMapping("/")
     public ResponseEntity<Proveedor> agregarProveedor(@RequestBody Proveedor proveedor) {
         Proveedor nuevoProveedor = proveedorServicio.guardarProveedor(proveedor);
@@ -46,7 +55,7 @@ public class ProveedorController {
     // Editar un proveedor
     @PutMapping("/")
     public ResponseEntity<Proveedor> editarProveedor(@RequestBody Proveedor proveedor) {
-        Long id = proveedor.getIdUsuario();
+        Long id = proveedor.getIdProveedor();
         if(id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
