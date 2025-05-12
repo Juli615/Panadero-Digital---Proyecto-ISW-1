@@ -1,16 +1,7 @@
 package com.example.panaderodigitalback.controlador;
 
-import com.example.panaderodigitalback.modelo.Pedido;
 import com.example.panaderodigitalback.modelo.Proveedor;
-import com.example.panaderodigitalback.modelo.Usuario;
-import com.example.panaderodigitalback.repositorio.ProveedorRepositorio;
-import com.example.panaderodigitalback.repositorio.UsuarioRepositorio;
 import com.example.panaderodigitalback.servicio.ProveedorServicio;
-import com.example.panaderodigitalback.servicio.UsuarioServicio;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/proveedores")
 public class ProveedorController {
-
-    private static final Logger log = LoggerFactory.getLogger(ProveedorController.class); // Agrega esta línea
 
     @Autowired
     private ProveedorServicio proveedorServicio;
@@ -52,7 +41,8 @@ public class ProveedorController {
         return new ResponseEntity<>(nuevoProveedor, HttpStatus.CREATED);
     }
 
-    // Editar un proveedor
+    /* Editar un proveedor, es importante que al querer editar
+    la info del proveedor OBLIGATORIAMENTE se envie el id del usuario asociado */
     @PutMapping("/")
     public ResponseEntity<Proveedor> editarProveedor(@RequestBody Proveedor proveedor) {
         Long id = proveedor.getIdProveedor();
@@ -64,20 +54,20 @@ public class ProveedorController {
         if(proveedorExistente != null) {
             Proveedor proveedorActualizado = proveedorServicio.guardarProveedor(proveedor);
             return new ResponseEntity<>(proveedorActualizado, HttpStatus.OK);
-        }else {
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     // Eliminar un proveedor por id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Proveedor> eliminarProveedor(@PathVariable Long id) {
-        Proveedor proveedorExistente = proveedorServicio.buscarProveedorPorId(id);
-        if(proveedorExistente != null) {
+    public ResponseEntity<Void> eliminarProveedor(@PathVariable Long id) {
+        try {
             proveedorServicio.eliminarProveedor(id);
-            return new ResponseEntity<>(proveedorExistente, HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); //  204 No Content (éxito, sin contenido en la respuesta)
+        } catch (RuntimeException e) {
+            //  Manejar la excepción (por ejemplo, Proveedor no encontrado)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); //  404 Not Found
         }
     }
 }

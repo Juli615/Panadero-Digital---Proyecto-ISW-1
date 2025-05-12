@@ -19,8 +19,8 @@ public class ProveedorServicio implements IProveedorServicio {
     @Autowired
     private ProveedorRepositorio proveedorRepositorio;
 
-    /*@Autowired
-    private UsuarioRepositorio usuarioRepositorio;*/
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
 
     @Override
     public List<Proveedor> buscarProveedores() {
@@ -37,9 +37,18 @@ public class ProveedorServicio implements IProveedorServicio {
         return proveedorRepositorio.save(proveedor);
     }
 
-    // Se implementa asi para que al borrar el proveedor, borre el usuario asociado
+    // Al borrar el proveedor, tambien borra el usuario asociado al mismo en una sola operacion
     @Override
     public void eliminarProveedor(Long id) {
-       proveedorRepositorio.deleteById(id);
+        Proveedor proveedor = proveedorRepositorio.findById(id)
+                .orElseThrow(() -> new RuntimeException("Proveedor no encontrado con ID: " + id));
+
+        Usuario usuario = proveedor.getUsuario();  //  Obtener el Usuario asociado
+
+        proveedorRepositorio.deleteById(id);       //  Eliminar el Proveedor
+
+        if (usuario != null) {
+            usuarioRepositorio.deleteById(usuario.getId());  //  Eliminar el Usuario
+        }
     }
 }
