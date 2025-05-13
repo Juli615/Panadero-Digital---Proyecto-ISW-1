@@ -1,85 +1,105 @@
 package com.example.panaderodigitalback.modelo;
 
-import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Entity
-@Table(name = Producto.TABLE_NAME)
+@Document(collection = "productos")
 public class Producto {
 
-    public static final String TABLE_NAME = "Producto";
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_producto")
-    private Long idProducto;
+    @Field("_id")
+    private String idProducto;
 
-    // Relacion uno a muchos con la tabla Producto_Insumo
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductoInsumo> productoInsumos;
-
-    // Relacion uno a muchos con la tabla Detalle_Venta
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetalleVenta> detallesVenta;
-
-    @Column(name = "nombre", length = 100)
+    @Field("nombre")
     private String nombre;
 
-    @Column(name = "descripcion")
+    @Field("descripcion")
     private String descripcion;
 
-    @Column(name = "precio")
+    @Field("precio")
     private BigDecimal precio;
 
-    @Column(name = "categoria", length = 100)
+    @Field("categoria")
     private String categoria;
 
-    @Column(name = "stock")
+    @Field("stock")
     private int stock;
 
-    @Column(name = "disponible")
+    @Field("disponible")
     private boolean disponible;
+
+    @Field("insumos")
+    private List<InsumoInfo> insumos; // Lista de insumos embebidos
+
+    // Clase interna para representar la información del insumo embebido
+    public static class InsumoInfo {
+        @Field("insumo_id")
+        private String insumoId;
+
+        @Field("nombre")
+        private String nombre;
+
+        @Field("cantidad_usada")
+        private Double cantidadUsada;
+
+        // Constructores, getters y setters para InsumoInfo
+        public InsumoInfo() {}
+
+        public InsumoInfo(String insumoId, String nombre, Double cantidadUsada) {
+            this.insumoId = insumoId;
+            this.nombre = nombre;
+            this.cantidadUsada = cantidadUsada;
+        }
+
+        public String getInsumoId() {
+            return insumoId;
+        }
+
+        public void setInsumoId(String insumoId) {
+            this.insumoId = insumoId;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public void setNombre(String nombre) {
+            this.nombre = nombre;
+        }
+
+        public Double getCantidadUsada() {
+            return cantidadUsada;
+        }
+
+        public void setCantidadUsada(Double cantidadUsada) {
+            this.cantidadUsada = cantidadUsada;
+        }
+    }
 
     // Constructores
     public Producto() {}
 
-    public Producto(List<ProductoInsumo> productoInsumos, List<DetalleVenta> detallesVenta, String nombre, String descripcion, BigDecimal precio, String categoria, int stock, boolean disponible) {
-        this.productoInsumos = productoInsumos;
-        this.detallesVenta = detallesVenta;
+    public Producto(String nombre, String descripcion, BigDecimal precio, String categoria, int stock, boolean disponible, List<InsumoInfo> insumos) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.categoria = categoria;
         this.stock = stock;
         this.disponible = disponible;
+        this.insumos = insumos;
     }
 
     // Getters y setters
-    public Long getIdProducto() {
+    public String getIdProducto() {
         return idProducto;
     }
 
-    public void setIdProducto(Long idProducto) {
+    public void setIdProducto(String idProducto) {
         this.idProducto = idProducto;
-    }
-
-    public List<ProductoInsumo> getProductoInsumos() {
-        return productoInsumos;
-    }
-
-    public void setProductoInsumos(List<ProductoInsumo> productoInsumos) {
-        this.productoInsumos = productoInsumos;
-    }
-
-    public List<DetalleVenta> getDetallesVenta() {
-        return detallesVenta;
-    }
-
-    public void setDetallesVenta(List<DetalleVenta> detallesVenta) {
-        this.detallesVenta = detallesVenta;
     }
 
     public String getNombre() {
@@ -128,5 +148,13 @@ public class Producto {
 
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
+    }
+
+    public List<InsumoInfo> getInsumos() {
+        return insumos;
+    }
+
+    public void setInsumos(List<InsumoInfo> insumos) {
+        this.insumos = insumos;
     }
 }

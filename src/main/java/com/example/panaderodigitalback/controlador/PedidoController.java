@@ -24,7 +24,7 @@ public class PedidoController {
 
     // Buscar pedido por id
     @GetMapping("/list/{id}")
-    public Pedido buscarPedidoPorId(@PathVariable Long id) {
+    public Pedido buscarPedidoPorId(@PathVariable String id) {
         return pedidoServicio.buscarPedidoPorId(id);
     }
 
@@ -38,7 +38,7 @@ public class PedidoController {
     // Editar un pedido
     @PutMapping("/")
     public ResponseEntity<Pedido> editarPedido(@RequestBody Pedido pedido) {
-        Long id = pedido.getIdPedido();
+        String id = pedido.getIdPedido();
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -54,7 +54,7 @@ public class PedidoController {
 
     // Eliminar pedido por id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Pedido> eliminarPedido(@PathVariable Long id) {
+    public ResponseEntity<Pedido> eliminarPedido(@PathVariable String id) {
         Pedido pedidoExistente = pedidoServicio.buscarPedidoPorId(id);
         if(pedidoExistente != null) {
             pedidoServicio.eliminarPedido(id);

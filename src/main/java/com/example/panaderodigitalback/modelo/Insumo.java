@@ -1,48 +1,35 @@
 package com.example.panaderodigitalback.modelo;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
-import java.util.List;
 
-@Entity
-@Table(name = Insumo.TABLE_NAME)
+@Document(collection = "insumos")
 public class Insumo {
 
-    public static final String TABLE_NAME = "Insumo";
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_insumo")
-    private Long idInsumo;
+    @Field("_id")
+    private String idInsumo;
 
-    // Relacion uno a muchos con la tabla Producto_Insumo
-    @OneToMany(mappedBy = "insumo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductoInsumo> productoInsumos;
-
-    // Relacion uno a muchos con la tabla Detalle_Pedido
-    @OneToMany(mappedBy = "insumo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetallePedido> detallesPedido;
-
-    @Column(name = "nombre")
+    @Field("nombre")
     private String nombre;
 
-    @Column(name = "cantidad_disponible")
+    @Field("cantidad_disponible")
     private BigDecimal cantidadDisponible;
 
-    @Column(name = "unidad_medida")
+    @Field("unidad_medida")
     private String unidadMedida;
 
-    @Column(name = "cantidad_medida")
+    @Field("cantidad_medida")
     private BigDecimal cantidadMedida;
 
     // Constructores
     public Insumo() {
     }
 
-    public Insumo(List<ProductoInsumo> productoInsumos, List<DetallePedido> detallesPedido, String nombre, BigDecimal cantidadDisponible, String unidadMedida, BigDecimal cantidadMedida) {
-        this.productoInsumos = productoInsumos;
-        this.detallesPedido = detallesPedido;
+    public Insumo(String nombre, BigDecimal cantidadDisponible, String unidadMedida, BigDecimal cantidadMedida) {
         this.nombre = nombre;
         this.cantidadDisponible = cantidadDisponible;
         this.unidadMedida = unidadMedida;
@@ -50,28 +37,12 @@ public class Insumo {
     }
 
     // Getters y setters
-    public Long getIdInsumo() {
+    public String getIdInsumo() {
         return idInsumo;
     }
 
-    public void setIdInsumo(Long idInsumo) {
+    public void setIdInsumo(String idInsumo) {
         this.idInsumo = idInsumo;
-    }
-
-    public List<ProductoInsumo> getProductoInsumos() {
-        return productoInsumos;
-    }
-
-    public void setProductoInsumos(List<ProductoInsumo> productoInsumos) {
-        this.productoInsumos = productoInsumos;
-    }
-
-    public List<DetallePedido> getDetallesPedido() {
-        return detallesPedido;
-    }
-
-    public void setDetallesPedido(List<DetallePedido> detallesPedido) {
-        this.detallesPedido = detallesPedido;
     }
 
     public String getNombre() {

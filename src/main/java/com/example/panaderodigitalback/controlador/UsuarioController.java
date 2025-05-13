@@ -24,7 +24,7 @@ public class UsuarioController {
 
     // Buscar usuario por id
     @GetMapping("/list/{id}")
-    public Usuario buscarUsuarioPorId(@PathVariable Long id) {
+    public Usuario buscarUsuarioPorId(@PathVariable String id) {
         return usuarioServicio.buscarUsuarioPorId(id);
     }
 
@@ -38,7 +38,7 @@ public class UsuarioController {
     // Editar un usuario
     @PutMapping("/")
     public ResponseEntity<Usuario> editarUsuario(@RequestBody Usuario usuario) {
-        Long id = usuario.getId();
+        String id = usuario.getId();
         if(id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -54,7 +54,7 @@ public class UsuarioController {
 
     // Eliminar un usuario por id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Usuario> eliminarUsuario(@PathVariable Long id) {
+    public ResponseEntity<Usuario> eliminarUsuario(@PathVariable String id) {
         Usuario usuarioExistente = usuarioServicio.buscarUsuarioPorId(id);
         if(usuarioExistente != null) {
             usuarioServicio.eliminarUsuario(id);

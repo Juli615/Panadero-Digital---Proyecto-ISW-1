@@ -1,71 +1,139 @@
 package com.example.panaderodigitalback.modelo;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = Venta.TABLE_NAME)
+@Document(collection = "ventas")
 public class Venta {
 
-    public static final String TABLE_NAME = "Venta";
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_venta")
-    private Long idVenta;
+    @Field("_id")
+    private String idVenta;
 
-    // Relacion muchos a uno con la tabla Usuario
-    @ManyToOne
-    @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
+    @Field("usuario_id")
+    private String usuarioId; // Referencia al ID del usuario (vendedor)
 
-    // Relacion uno a muchos con la tabla Detalle_Venta
-    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetalleVenta> detallesVenta;
+    @Field("nombres_vendedor")
+    private String nombresVendedor; // Dato duplicado para facilitar consultas
 
-    @Column(name = "fecha_venta")
+    @Field("fecha_venta")
     private LocalDateTime fechaVenta = LocalDateTime.now();
 
-    @Column(name = "monto_total")
+    @Field("monto_total")
     private BigDecimal montoTotal;
+
+    @Field("productos")
+    private List<ProductoVendido> productos; // Lista de productos vendidos embebidos
+
+    // Clase interna para representar la información del producto vendido
+    public static class ProductoVendido {
+        @Field("producto_id")
+        private String productoId;
+
+        @Field("nombre")
+        private String nombre;
+
+        @Field("precio_unitario")
+        private BigDecimal precioUnitario;
+
+        @Field("cantidad")
+        private int cantidad;
+
+        @Field("subtotal")
+        private BigDecimal subtotal;
+
+        // Constructores, getters y setters para ProductoVendido
+        public ProductoVendido() {}
+
+        public ProductoVendido(String productoId, String nombre, BigDecimal precioUnitario, int cantidad, BigDecimal subtotal) {
+            this.productoId = productoId;
+            this.nombre = nombre;
+            this.precioUnitario = precioUnitario;
+            this.cantidad = cantidad;
+            this.subtotal = subtotal;
+        }
+
+        public String getProductoId() {
+            return productoId;
+        }
+
+        public void setProductoId(String productoId) {
+            this.productoId = productoId;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public void setNombre(String nombre) {
+            this.nombre = nombre;
+        }
+
+        public BigDecimal getPrecioUnitario() {
+            return precioUnitario;
+        }
+
+        public void setPrecioUnitario(BigDecimal precioUnitario) {
+            this.precioUnitario = precioUnitario;
+        }
+
+        public int getCantidad() {
+            return cantidad;
+        }
+
+        public void setCantidad(int cantidad) {
+            this.cantidad = cantidad;
+        }
+
+        public BigDecimal getSubtotal() {
+            return subtotal;
+        }
+
+        public void setSubtotal(BigDecimal subtotal) {
+            this.subtotal = subtotal;
+        }
+    }
 
     //Constructores
     public Venta() {
     }
 
-    public Venta(Usuario usuario, List<DetalleVenta> detallesVenta, LocalDateTime fechaVenta, BigDecimal montoTotal) {
-        this.usuario = usuario;
-        this.detallesVenta = detallesVenta;
+    public Venta(String usuarioId, String nombresVendedor, LocalDateTime fechaVenta, BigDecimal montoTotal, List<ProductoVendido> productos) {
+        this.usuarioId = usuarioId;
+        this.nombresVendedor = nombresVendedor;
         this.fechaVenta = fechaVenta;
         this.montoTotal = montoTotal;
+        this.productos = productos;
     }
 
     //Getters y setters
-    public Long getIdVenta() {
+    public String getIdVenta() {
         return idVenta;
     }
 
-    public void setIdVenta(Long idVenta) {
+    public void setIdVenta(String idVenta) {
         this.idVenta = idVenta;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public String getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuarioId(String usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
-    public List<DetalleVenta> getDetallesVenta() {
-        return detallesVenta;
+    public String getNombresVendedor() {
+        return nombresVendedor;
     }
 
-    public void setDetallesVenta(List<DetalleVenta> detallesVenta) {
-        this.detallesVenta = detallesVenta;
+    public void setNombresVendedor(String nombresVendedor) {
+        this.nombresVendedor = nombresVendedor;
     }
 
     public LocalDateTime getFechaVenta() {
@@ -82,5 +150,13 @@ public class Venta {
 
     public void setMontoTotal(BigDecimal montoTotal) {
         this.montoTotal = montoTotal;
+    }
+
+    public List<ProductoVendido> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<ProductoVendido> productos) {
+        this.productos = productos;
     }
 }

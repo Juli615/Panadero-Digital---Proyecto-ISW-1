@@ -10,11 +10,11 @@ public interface IPedidoServicio {
     List<Pedido> buscarPedidos();
 
     // Buscar un pedido por ID
-    Pedido buscarPedidoPorId(Long id);
+    Pedido buscarPedidoPorId(String id);
 
     // Guardar pedido
     Pedido guardarPedido(Pedido pedido);
 
     // Eliminar un pedido por id
-    void eliminarPedido(Long id); //
+    void eliminarPedido(String id);
 }

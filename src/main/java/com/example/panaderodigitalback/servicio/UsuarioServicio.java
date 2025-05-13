@@ -2,14 +2,13 @@ package com.example.panaderodigitalback.servicio;
 
 import com.example.panaderodigitalback.modelo.Usuario;
 import com.example.panaderodigitalback.repositorio.UsuarioRepositorio;
-import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class UsuarioServicio implements IUsuarioServicio {
 
     @Autowired
@@ -21,7 +20,7 @@ public class UsuarioServicio implements IUsuarioServicio {
     }
 
     @Override
-    public Usuario buscarUsuarioPorId(Long id) {
+    public Usuario buscarUsuarioPorId(String id) {
         return usuarioRepositorio.findById(id).orElse(null);
     }
 
@@ -31,7 +30,7 @@ public class UsuarioServicio implements IUsuarioServicio {
     }
 
     @Override
-    public void eliminarUsuario(Long id) {
+    public void eliminarUsuario(String id) {
         usuarioRepositorio.deleteById(id);
     }
 }

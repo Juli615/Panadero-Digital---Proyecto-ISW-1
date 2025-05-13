@@ -7,14 +7,14 @@ import java.util.List;
 public interface IUsuarioServicio {
 
     //Buscar todos los usuarios
-    public List<Usuario> buscarUsuarios();
+    List<Usuario> buscarUsuarios();
 
     //Buscar usuario por id
-    public Usuario buscarUsuarioPorId(Long id);
+    Usuario buscarUsuarioPorId(String id);
 
     // Guardar usuario
-    public Usuario guardarUsuario(Usuario usuario);
+    Usuario guardarUsuario(Usuario usuario);
 
     // Eliminar usuario por id
-    public void eliminarUsuario(Long id);
+    void eliminarUsuario(String id);
 }
