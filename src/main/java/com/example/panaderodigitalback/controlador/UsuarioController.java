@@ -24,19 +24,21 @@ public class UsuarioController {
 
     // Buscar usuario por id
     @GetMapping("/list/{id}")
-    public Usuario buscarUsuarioPorId(@PathVariable String id) {
+    public Usuario buscarUsuarioPorId(@PathVariable("id") String id) {
         return usuarioServicio.buscarUsuarioPorId(id);
     }
 
     // Agregar un usuario
-    @PostMapping("/")
+    // Los datos se pasan en el cuerpo de la peticion
+    @PostMapping("/agregar")
     public ResponseEntity<Usuario> agregarUsuario(@RequestBody Usuario usuario) {
         Usuario nuevoUsuario = usuarioServicio.guardarUsuario(usuario);
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }
 
     // Editar un usuario
-    @PutMapping("/")
+    // El id se pasa en el cuerpo de la peticion
+    @PutMapping("/editar")
     public ResponseEntity<Usuario> editarUsuario(@RequestBody Usuario usuario) {
         String id = usuario.getId();
         if(id == null) {
@@ -53,8 +55,8 @@ public class UsuarioController {
     }
 
     // Eliminar un usuario por id
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Usuario> eliminarUsuario(@PathVariable String id) {
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Usuario> eliminarUsuario(@PathVariable("id") String id) {
         Usuario usuarioExistente = usuarioServicio.buscarUsuarioPorId(id);
         if(usuarioExistente != null) {
             usuarioServicio.eliminarUsuario(id);

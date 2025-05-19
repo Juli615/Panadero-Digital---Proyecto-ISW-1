@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 public class Insumo {
 
     @Id
-    @Field("_id")
     private String idInsumo;
 
     @Field("nombre")

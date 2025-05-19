@@ -11,7 +11,6 @@ import java.util.List;
 public class Producto {
 
     @Id
-    @Field("_id")
     private String idProducto;
 
     @Field("nombre")

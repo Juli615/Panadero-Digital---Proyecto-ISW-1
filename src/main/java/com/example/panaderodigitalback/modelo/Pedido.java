@@ -13,7 +13,6 @@ import java.util.List;
 public class Pedido {
 
     @Id
-    @Field("_id")
     private String idPedido;
 
     @Field("usuario_id")
