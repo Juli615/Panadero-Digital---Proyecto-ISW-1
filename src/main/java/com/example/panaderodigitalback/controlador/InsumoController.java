@@ -28,15 +28,17 @@ public class InsumoController {
         return insumoServicio.buscarInsumoPorId(idInsumo);
     }
 
-    //Agregar un insumo
-    @PostMapping("/")
+    // Agregar un insumo
+    // Los datos se pasan en el cuerpo de la peticion
+    @PostMapping("/agregar")
     public ResponseEntity<Insumo> agregarInsumo(@RequestBody Insumo insumo) {
         Insumo nuevoInsumo = insumoServicio.guardarInsumo(insumo);
         return new ResponseEntity<>(nuevoInsumo, HttpStatus.CREATED);
     }
 
     //Editar un insumo
-    @PutMapping("/")
+    // El id se pasa en el cuerpo de la peticion
+    @PutMapping("/editar")
     public ResponseEntity<Insumo> editarInsumo(@RequestBody Insumo insumo) {
         String idInsumo = insumo.getIdInsumo();
         if(idInsumo == null) {
@@ -53,8 +55,8 @@ public class InsumoController {
     }
 
     //Eliminar un insumo por id
-    @DeleteMapping("/")
-    public ResponseEntity<Insumo> eliminarInsumo(@PathVariable String idInsumo) {
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Insumo> eliminarInsumo(@PathVariable("id") String idInsumo) {
         Insumo insumoExistente = insumoServicio.buscarInsumoPorId(idInsumo);
         if(insumoExistente != null) {
             insumoServicio.eliminarInsumo(idInsumo);

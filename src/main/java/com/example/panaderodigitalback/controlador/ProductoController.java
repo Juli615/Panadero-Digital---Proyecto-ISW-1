@@ -24,19 +24,21 @@ public class ProductoController {
 
     //Buscar producto por id
     @GetMapping("/list/{id}")
-    public Producto buscarProductoPorId(@PathVariable String id) {
+    public Producto buscarProductoPorId(@PathVariable("id") String id) {
         return productoServicio.buscarProductoPorId(id);
     }
 
     // Agregar un producto
-    @PostMapping("/")
+    // Los datos se pasan en el cuerpo de la peticion
+    @PostMapping("/agregar")
     public ResponseEntity<Producto> agregarProducto(@RequestBody Producto producto) {
         Producto nuevoProducto = productoServicio.guardarProducto(producto);
         return new ResponseEntity<>(nuevoProducto, HttpStatus.CREATED);
     }
 
     // Editar un producto
-    @PutMapping("/")
+    // El id se pasa en el cuerpo de la peticion
+    @PutMapping("/editar")
     public ResponseEntity<Producto> editarProducto(@RequestBody Producto producto) {
         String id = producto.getIdProducto();
         if(id == null) {
@@ -53,8 +55,8 @@ public class ProductoController {
     }
 
     // Eliminar un producto por id
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Producto> eliminarProducto(@PathVariable String id) {
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Producto> eliminarProducto(@PathVariable("id") String id) {
         Producto productoExistente = productoServicio.buscarProductoPorId(id);
         if(productoExistente != null) {
             productoServicio.eliminarProducto(id);

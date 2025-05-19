@@ -24,19 +24,21 @@ public class PedidoController {
 
     // Buscar pedido por id
     @GetMapping("/list/{id}")
-    public Pedido buscarPedidoPorId(@PathVariable String id) {
+    public Pedido buscarPedidoPorId(@PathVariable("id") String id) {
         return pedidoServicio.buscarPedidoPorId(id);
     }
 
     // Agregar un pedido
-   @PostMapping("/")
+    // Los datos se pasan en el cuerpo de la peticion
+   @PostMapping("/agregar")
     public ResponseEntity<Pedido> agregarPedido(@RequestBody Pedido pedido) {
         Pedido nuevoPedido = pedidoServicio.guardarPedido(pedido);
         return new ResponseEntity<>(nuevoPedido, HttpStatus.CREATED);
     }
 
     // Editar un pedido
-    @PutMapping("/")
+    // El id se pasa en el cuerpo de la peticion
+    @PutMapping("/editar")
     public ResponseEntity<Pedido> editarPedido(@RequestBody Pedido pedido) {
         String id = pedido.getIdPedido();
         if (id == null) {
@@ -53,8 +55,8 @@ public class PedidoController {
     }
 
     // Eliminar pedido por id
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Pedido> eliminarPedido(@PathVariable String id) {
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Pedido> eliminarPedido(@PathVariable("id") String id) {
         Pedido pedidoExistente = pedidoServicio.buscarPedidoPorId(id);
         if(pedidoExistente != null) {
             pedidoServicio.eliminarPedido(id);

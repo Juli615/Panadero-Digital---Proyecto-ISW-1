@@ -24,19 +24,21 @@ public class VentaController {
 
     //Buscar venta por id
     @GetMapping("/list/{id}")
-    public Venta buscarVentaPorId(@PathVariable String id) {
+    public Venta buscarVentaPorId(@PathVariable("id") String id) {
         return ventaServicio.buscarVentaPorId(id);
     }
 
     //Agregar una venta
-    @PostMapping("/")
+    //Los datos se pasan en el cuerpo de la peticion
+    @PostMapping("/agregar")
     public ResponseEntity<Venta> agregarVenta(@RequestBody Venta venta) {
         Venta nuevaVenta = ventaServicio.guardarVenta(venta);
         return new ResponseEntity<>(nuevaVenta, HttpStatus.CREATED);
     }
 
     //Editar una venta
-    @PutMapping("/")
+    //El id se pasa en el cuerpo de la peticion
+    @PutMapping("/editar")
     public ResponseEntity<Venta> editarVenta(@RequestBody Venta venta) {
         String id = venta.getIdVenta();
         if (id == null) {
@@ -53,8 +55,8 @@ public class VentaController {
     }
 
     //Eliminar una venta por id
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Venta> eliminarVenta(@PathVariable String id) {
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Venta> eliminarVenta(@PathVariable("id") String id) {
         Venta ventaExistente = ventaServicio.buscarVentaPorId(id);
         if(ventaExistente != null) {
             ventaServicio.eliminarVenta(id);
