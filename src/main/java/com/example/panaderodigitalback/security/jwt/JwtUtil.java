@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +51,13 @@ public class JwtUtil {
     // Metodo para generar el token para un usuario
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        // Aquí puedes agregar más información (claims) al token si es necesario, por ejemplo, roles
+        // Extraer el rol de las autoridades y quitar el prefijo ROLE_
+        String role = userDetails.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .map(auth -> auth.replace("ROLE_", ""))
+                .orElseThrow(() -> new IllegalStateException("No se encontraron roles para el usuario: " + userDetails.getUsername()));
+        claims.put("role", role); // Agregar el rol sin el prefijo ROLE_
         return createToken(claims, userDetails.getUsername());
     }
 

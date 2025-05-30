@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
+import {jwtDecode} from 'jwt-decode';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -15,16 +16,30 @@ const Login = () => {
       const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ correo: username, password }),
       });
-      if (!response.ok) throw new Error('Credenciales inválidas');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Credenciales inválidas');
+      }
       const data = await response.json();
-      setAuth({ token: data.token, role: data.role });
-      localStorage.setItem('token', data.token);
-      if (data.role === 'admin') {
+      const token = data.token;
+      const decodedToken = jwtDecode(token);
+      const role = decodedToken.role ? decodedToken.role.toLowerCase() : null; // Convertir a minúsculas
+
+      if (!role) {
+        throw new Error('Rol no encontrado en el token');
+      }
+
+      setAuth({ token }); // Guardar solo el token en el contexto
+      localStorage.setItem('token', token); // Guardar token en localStorage
+
+      if (role === 'admin') {
         navigate('/admin');
-      } else if (data.role === 'vendedor') {
+      } else if (role === 'vendedor') {
         navigate('/seller');
+      } else {
+        throw new Error('Rol no reconocido: ' + role);
       }
     } catch (err) {
       setError(err.message);
@@ -41,7 +56,7 @@ const Login = () => {
           className="mb-4"
           style={{
             fontFamily: "'Lobster', cursive",
-            fontSize: '4rem', // Aumentado para mayor impacto
+            fontSize: '4rem',
             color: '#343a40',
             textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
           }}
