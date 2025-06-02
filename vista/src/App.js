@@ -1,45 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Login from './components/Login';
-import Dashboard from './components/Dashboard';
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [user, setUser] = useState(null);
-
-  // Verificar si hay un token al cargar la app y obtener datos del usuario
-  useEffect(() => {
-    if (token) {
-      const fetchUserData = async () => {
-        try {
-          const response = await fetch('http://localhost:8080/api/user', {
-            headers: { 'Authorization': `Bearer ${token}` },
-          });
-          if (!response.ok) throw new Error('Token inválido');
-          const data = await response.json();
-          setUser({ role: data.role }); // Ajusta según la respuesta de tu backend
-        } catch (err) {
-          console.error('Error al validar token:', err.message);
-          handleLogout(); // Si el token es inválido, cerrar sesión
-        }
-      };
-      fetchUserData();
-    }
-  }, [token]);
+  const [userData, setUserData] = useState(null);
 
   const handleLogout = () => {
     setToken('');
-    setUser(null);
+    setUserData(null);
     localStorage.removeItem('token');
   };
 
-  // Renderizar según el estado de autenticación
   return (
     <div className="container">
-      <h1>Panadero Digital</h1>
-      {token && user ? (
-        <Dashboard token={token} user={user} onLogout={handleLogout} />
+      <h1 className="text-center my-4">Panadero Digital</h1>
+      {token && userData ? (
+        <div className="text-center">
+          <h2>¡Bienvenido!</h2>
+          <p>Has iniciado sesión con el correo: {userData.correo}</p>
+          <p>Nombre: {userData.nombres} {userData.apellidos}</p>
+          <button 
+            className="btn btn-danger mt-3"
+            onClick={handleLogout}
+          >
+            Cerrar Sesión
+          </button>
+        </div>
       ) : (
-        <Login setToken={setToken} setUser={setUser} />
+        <Login setToken={setToken} setUserData={setUserData} />
       )}
     </div>
   );
