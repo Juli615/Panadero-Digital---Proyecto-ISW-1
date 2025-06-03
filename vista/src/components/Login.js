@@ -21,8 +21,7 @@ const Login = ({ setToken, setUserData }) => {
       const data = await api.login(credentials);
       console.log('Login exitoso:', data);
 
-      if (data.token) {
-        localStorage.setItem('token', data.token);
+      if (data && data.token) {
         setToken(data.token);
         setUserData({
           correo: data.correo,

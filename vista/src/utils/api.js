@@ -63,9 +63,6 @@ export const api = {
                 body: JSON.stringify(credentials)
             });
             const data = await api.handleResponse(response);
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-            }
             return data;
         } catch (error) {
             console.error('Error en login:', error);
