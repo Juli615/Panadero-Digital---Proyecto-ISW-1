@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Tabs, Tab, Table, Card, Row, Col, Button } from 'react-bootstrap';
-import { FaChartLine, FaChartBar, FaBoxes, FaCalendarAlt } from 'react-icons/fa';
+import { FaChartLine, FaChartBar, FaBoxes } from 'react-icons/fa';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,9 +10,11 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  DoughnutController,
+  ArcElement
 } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
+import { Bar, Line, Doughnut } from 'react-chartjs-2';
 
 // Registrar los componentes necesarios de Chart.js
 ChartJS.register(
@@ -21,6 +23,8 @@ ChartJS.register(
   PointElement,
   LineElement,
   BarElement,
+  DoughnutController,
+  ArcElement,
   Title,
   Tooltip,
   Legend
@@ -107,8 +111,25 @@ const ReportesVentas = ({ show, onHide }) => {
             .slice(0, 5); // Top 5 productos
     };
 
+    // Procesar datos para el inventario
+    const procesarDatosInventario = () => {
+        // Clasificar productos por nivel de stock
+        const clasificacion = {
+            critico: productos.filter(p => p.stock <= 5).length,
+            bajo: productos.filter(p => p.stock > 5 && p.stock <= 10).length,
+            normal: productos.filter(p => p.stock > 10).length
+        };
+
+        return {
+            labels: ['Stock Crítico (≤5)', 'Stock Bajo (6-10)', 'Stock Normal (>10)'],
+            data: [clasificacion.critico, clasificacion.bajo, clasificacion.normal],
+            colores: ['#dc3545', '#ffc107', '#198754']
+        };
+    };
+
     const datosIngresos = procesarIngresosPorPeriodo();
     const datosProductos = procesarProductosMasVendidos();
+    const datosInventario = procesarDatosInventario();
 
     const datosGraficoIngresos = {
         labels: datosIngresos.labels,
@@ -127,6 +148,15 @@ const ReportesVentas = ({ show, onHide }) => {
             data: datosProductos.map(p => p.cantidad),
             backgroundColor: 'rgba(54, 162, 235, 0.5)',
             borderColor: 'rgb(54, 162, 235)',
+            borderWidth: 1
+        }]
+    };
+
+    const datosGraficoInventario = {
+        labels: datosInventario.labels,
+        datasets: [{
+            data: datosInventario.data,
+            backgroundColor: datosInventario.colores,
             borderWidth: 1
         }]
     };
@@ -211,6 +241,62 @@ const ReportesVentas = ({ show, onHide }) => {
                                                         <td>{producto.nombre}</td>
                                                         <td>{producto.cantidad}</td>
                                                         <td>${producto.total.toLocaleString('es-CO')}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Tab>
+
+                    {/* Tab de Inventario */}
+                    <Tab eventKey="inventario" title={<span><FaBoxes className="me-2" />Niveles de Inventario</span>}>
+                        <Card>
+                            <Card.Body>
+                                <Row>
+                                    <Col md={6}>
+                                        <div className="text-center mb-4">
+                                            <h5>Distribución del Inventario</h5>
+                                            <Doughnut 
+                                                data={datosGraficoInventario}
+                                                options={{
+                                                    responsive: true,
+                                                    plugins: {
+                                                        legend: {
+                                                            position: 'bottom'
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                    </Col>
+                                    <Col md={6}>
+                                        <Table striped bordered hover>
+                                            <thead>
+                                                <tr>
+                                                    <th>Producto</th>
+                                                    <th>Stock Actual</th>
+                                                    <th>Estado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {productos.map((producto, idx) => (
+                                                    <tr key={idx}>
+                                                        <td>{producto.nombre}</td>
+                                                        <td>{producto.stock}</td>
+                                                        <td>
+                                                            <span className={`badge bg-${
+                                                                producto.stock <= 5 ? 'danger' : 
+                                                                producto.stock <= 10 ? 'warning' : 
+                                                                'success'
+                                                            }`}>
+                                                                {producto.stock <= 5 ? 'Crítico' : 
+                                                                 producto.stock <= 10 ? 'Bajo' : 
+                                                                 'Normal'}
+                                                            </span>
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
