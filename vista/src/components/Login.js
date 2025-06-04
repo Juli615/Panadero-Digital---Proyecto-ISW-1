@@ -22,13 +22,20 @@ const Login = ({ setToken, setUserData }) => {
       console.log('Login exitoso:', data);
 
       if (data && data.token) {
+        // Guardar el token
+        localStorage.setItem('token', data.token);
         setToken(data.token);
-        setUserData({
+
+        // Guardar la información del usuario
+        const userInfo = {
+          id: data.id,
           correo: data.correo,
           nombres: data.nombres,
           apellidos: data.apellidos,
           rol: data.rol
-        });
+        };
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        setUserData(userInfo);
       } else {
         throw new Error('No se recibió el token en la respuesta');
       }

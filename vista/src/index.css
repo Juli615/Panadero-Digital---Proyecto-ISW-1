@@ -5,9 +5,121 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa !important;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Navbar Styles */
+.navbar {
+  padding: 0.8rem 1rem;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.nav-link {
+  border-radius: 0.375rem;
+  margin: 0.25rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link-active {
+  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: 500;
+}
+
+/* Dropdown Styles */
+.dropdown-toggle.btn-outline-light {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+}
+
+.dropdown-toggle.btn-outline-light:hover,
+.dropdown-toggle.btn-outline-light:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.dropdown-menu {
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Icon Animation */
+.spin-hover {
+  transition: transform 0.3s ease-in-out;
+}
+
+.navbar-brand:hover .spin-hover {
+  transform: rotate(180deg);
+}
+
+/* Container Styles */
+.container-fluid {
+  max-width: 1400px;
+}
+
+/* Estilos para el ticket de venta */
+.ticket-container {
+    background-color: white;
+    padding: 15px;
+    font-size: 0.9em;
+}
+
+.ticket-container hr {
+    border-top: 1px dashed #000;
+    margin: 10px 0;
+}
+
+.ticket-table {
+    font-size: 0.85em;
+    margin-bottom: 0;
+}
+
+.ticket-table th,
+.ticket-table td {
+    padding: 2px 4px !important;
+}
+
+.ticket-table th {
+    border-bottom: 1px solid #ddd;
+}
+
+/* Ajustar el ancho del modal del ticket */
+.modal-sm {
+    max-width: 350px !important;
+}
+
+/* Estilo para simular papel térmico */
+.ticket-container {
+    background: linear-gradient(to right, #fff 0%, #f8f9fa 50%, #fff 100%);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar-collapse {
+    padding: 1rem 0;
+  }
+  
+  .nav-link {
+    padding: 0.75rem 1rem !important;
+  }
+
+  .dropdown-toggle {
+    width: 100%;
+    margin-top: 1rem;
+    justify-content: center;
+  }
 }

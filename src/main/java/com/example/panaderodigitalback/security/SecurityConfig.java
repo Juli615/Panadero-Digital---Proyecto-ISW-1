@@ -42,6 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/productos/**").permitAll()
                         .requestMatchers("/api/pedidos/**").permitAll()
                         .requestMatchers("/api/usuarios/**").permitAll()
+                        .requestMatchers("/api/ventas/**").permitAll()
+                        .requestMatchers("/api/notificaciones/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/vendedor/**").hasRole("VENDEDOR")
                         .requestMatchers("/api/proveedor/**").hasRole("PROVEEDOR")
