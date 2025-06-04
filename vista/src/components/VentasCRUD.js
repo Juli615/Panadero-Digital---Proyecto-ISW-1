@@ -16,13 +16,13 @@ import { FaEdit, FaTrash, FaSearch, FaPlus, FaShoppingCart, FaCalculator, FaRece
 import TicketVenta from './TicketVenta';
 import ReportesVentas from './ReportesVentas';
 
-const VentasCRUD = () => {
+const VentasCRUD = ({ usuarioId }) => {
   // Estados
   const [ventas, setVentas] = useState([]);
-  const [productos, setProductos] = useState([]); // Lista de productos disponibles
+  const [productos, setProductos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentVenta, setCurrentVenta] = useState({
-    usuarioId: '',
+    usuarioId: usuarioId,
     nombresVendedor: '',
     fechaVenta: new Date().toISOString(),
     productos: [],
@@ -43,9 +43,6 @@ const VentasCRUD = () => {
   const [selectedVenta, setSelectedVenta] = useState(null);
   const [showReportes, setShowReportes] = useState(false);
 
-  // Estados de venta disponibles
-  const estadosVenta = ['completada', 'cancelada'];
-
   // Obtener información del vendedor del localStorage
   const getUserInfo = () => {
     const userInfoStr = localStorage.getItem('userInfo');
@@ -65,16 +62,25 @@ const VentasCRUD = () => {
   // Obtener ventas
   const fetchVentas = async () => {
     try {
+      const userInfo = getUserInfo();
+      if (!userInfo) return;
+
       const response = await fetch('http://localhost:8080/api/ventas/list');
       if (!response.ok) throw new Error('Error al cargar las ventas');
-      const data = await response.json();
+      let data = await response.json();
+
+      // Si el usuario es vendedor, filtrar solo sus ventas
+      if (userInfo.rol === 'vendedor') {
+        data = data.filter(venta => venta.usuarioId === userInfo.id);
+      }
+
       setVentas(data);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Obtener productos disponibles
+  // Obtener productos
   const fetchProductos = async () => {
     try {
       const response = await fetch('http://localhost:8080/api/productos/list');
@@ -86,7 +92,7 @@ const VentasCRUD = () => {
     }
   };
 
-  // Manejar cambios en el formulario principal
+  // Manejar cambios en el formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCurrentVenta(prev => ({
@@ -95,31 +101,22 @@ const VentasCRUD = () => {
     }));
   };
 
-  // Manejar cambios en el formulario de productos
+  // Manejar cambios en el producto actual
   const handleProductoChange = (e) => {
     const { name, value } = e.target;
-    
     if (name === 'productoId') {
-      const productoSeleccionado = productos.find(p => p.idProducto === value);
-      if (productoSeleccionado) {
+      const producto = productos.find(p => p.idProducto === value);
+      if (producto) {
         setCurrentProducto(prev => ({
           ...prev,
           productoId: value,
-          nombre: productoSeleccionado.nombre,
-          precioUnitario: parseFloat(productoSeleccionado.precio),
-          subtotal: parseFloat(productoSeleccionado.precio) * prev.cantidad
+          nombre: producto.nombre,
+          precioUnitario: producto.precio,
+          subtotal: producto.precio * prev.cantidad
         }));
-      } else {
-        setCurrentProducto({
-          productoId: '',
-          nombre: '',
-          precioUnitario: 0,
-          cantidad: 1,
-          subtotal: 0
-        });
       }
     } else if (name === 'cantidad') {
-      const cantidad = parseInt(value) || 0;
+      const cantidad = parseFloat(value) || 0;
       setCurrentProducto(prev => ({
         ...prev,
         cantidad,
@@ -129,40 +126,29 @@ const VentasCRUD = () => {
   };
 
   // Agregar producto a la venta
-  const handleAddProducto = () => {
-    // Validar que haya un producto seleccionado
-    if (!currentProducto.productoId || currentProducto.productoId === '') {
-      setError('Por favor seleccione un producto');
+  const handleAgregarProducto = () => {
+    if (!currentProducto.productoId || currentProducto.cantidad <= 0) {
+      setError('Por favor seleccione un producto y una cantidad válida');
       return;
     }
 
-    // Validar que la cantidad sea válida
-    if (!currentProducto.cantidad || currentProducto.cantidad <= 0) {
-      setError('Por favor ingrese una cantidad válida');
-      return;
-    }
-
-    // Si pasa las validaciones, agregar el producto
     setCurrentVenta(prev => {
-      const nuevosProductos = [...prev.productos, {
-        productoId: currentProducto.productoId,
-        nombre: currentProducto.nombre,
-        precioUnitario: currentProducto.precioUnitario,
-        cantidad: currentProducto.cantidad,
-        subtotal: currentProducto.subtotal
-      }];
-      
+      const productos = [...prev.productos];
+      const index = productos.findIndex(p => p.productoId === currentProducto.productoId);
+
+      if (index >= 0) {
+        productos[index] = currentProducto;
+      } else {
+        productos.push(currentProducto);
+      }
+
       return {
         ...prev,
-        productos: nuevosProductos,
-        montoTotal: nuevosProductos.reduce((total, prod) => total + prod.subtotal, 0)
+        productos,
+        montoTotal: productos.reduce((sum, p) => sum + p.subtotal, 0)
       };
     });
 
-    // Limpiar el mensaje de error si existe
-    setError('');
-    
-    // Resetear el formulario de producto
     setCurrentProducto({
       productoId: '',
       nombre: '',
@@ -172,16 +158,14 @@ const VentasCRUD = () => {
     });
   };
 
-  // Remover producto de la venta
-  const handleRemoveProducto = (productoId) => {
+  // Eliminar producto de la venta
+  const handleQuitarProducto = (productoId) => {
     setCurrentVenta(prev => {
-      const nuevosProductos = prev.productos.filter(p => p.productoId !== productoId);
-      const nuevoMontoTotal = nuevosProductos.reduce((total, prod) => total + prod.subtotal, 0);
-      
+      const productos = prev.productos.filter(p => p.productoId !== productoId);
       return {
         ...prev,
-        productos: nuevosProductos,
-        montoTotal: nuevoMontoTotal
+        productos,
+        montoTotal: productos.reduce((sum, p) => sum + p.subtotal, 0)
       };
     });
   };
@@ -204,31 +188,31 @@ const VentasCRUD = () => {
 
   // Abrir modal para editar venta
   const handleEdit = (venta) => {
-    setCurrentVenta({
-      ...venta,
-      fechaVenta: new Date(venta.fechaVenta).toISOString()
-    });
+    const userInfo = getUserInfo();
+    if (!userInfo) return;
+
+    // Si es vendedor, solo puede editar sus propias ventas
+    if (userInfo.rol === 'vendedor' && venta.usuarioId !== userInfo.id) {
+      setError('No tiene permiso para editar esta venta');
+      return;
+    }
+
+    setCurrentVenta(venta);
     setIsEditing(true);
     setShowModal(true);
   };
 
-  // Guardar venta (crear o editar)
+  // Guardar venta
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const userInfo = getUserInfo();
-      if (!userInfo) return;
+    const userInfo = getUserInfo();
+    if (!userInfo) return;
 
+    try {
       if (currentVenta.productos.length === 0) {
         setError('Debe agregar al menos un producto a la venta');
         return;
       }
-
-      const ventaToSend = {
-        ...currentVenta,
-        usuarioId: userInfo.id,
-        nombresVendedor: `${userInfo.nombres} ${userInfo.apellidos}`
-      };
 
       const url = isEditing 
         ? 'http://localhost:8080/api/ventas/editar'
@@ -239,28 +223,33 @@ const VentasCRUD = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(ventaToSend)
+        body: JSON.stringify(currentVenta)
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al procesar la venta');
-      }
+      if (!response.ok) throw new Error('Error al guardar la venta');
       
-      setSuccess(isEditing ? 'Venta actualizada con éxito' : 'Venta registrada con éxito');
+      setSuccess(isEditing ? 'Venta actualizada con éxito' : 'Venta creada con éxito');
       setShowModal(false);
       fetchVentas();
       
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err.message);
-      // No cerramos el modal si hay error para que el usuario pueda corregir
     }
   };
 
   // Eliminar venta
   const handleDelete = async (id) => {
+    const userInfo = getUserInfo();
+    if (!userInfo) return;
+
+    // Si es vendedor, solo puede eliminar sus propias ventas
+    const venta = ventas.find(v => v.idVenta === id);
+    if (userInfo.rol === 'vendedor' && venta && venta.usuarioId !== userInfo.id) {
+      setError('No tiene permiso para eliminar esta venta');
+      return;
+    }
+
     if (window.confirm('¿Está seguro de eliminar esta venta?')) {
       try {
         const response = await fetch(`http://localhost:8080/api/ventas/eliminar/${id}`, {
@@ -279,18 +268,19 @@ const VentasCRUD = () => {
     }
   };
 
-  // Filtrar ventas según término de búsqueda y ordenar por fecha
-  const filteredVentas = ventas
-    .filter(venta =>
-      venta.fechaVenta ? venta.fechaVenta.toString().includes(searchTerm) : false
-    )
-    .sort((a, b) => new Date(b.fechaVenta) - new Date(a.fechaVenta));
-
   // Mostrar ticket de venta
   const handleShowTicket = (venta) => {
     setSelectedVenta(venta);
     setShowTicket(true);
   };
+
+  // Filtrar ventas según término de búsqueda
+  const filteredVentas = ventas.filter(venta =>
+    venta.nombresVendedor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    venta.productos.some(producto => 
+      producto.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
   return (
     <Container fluid>
@@ -301,7 +291,7 @@ const VentasCRUD = () => {
         <Col md={6}>
           <InputGroup>
             <Form.Control
-              placeholder="Buscar por fecha..."
+              placeholder="Buscar por vendedor o producto..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -311,12 +301,14 @@ const VentasCRUD = () => {
           </InputGroup>
         </Col>
         <Col md={6} className="text-end">
-          <Button variant="info" className="me-2" onClick={() => setShowReportes(true)}>
-            <FaChartLine className="me-1" /> Reportes
-          </Button>
-          <Button variant="primary" onClick={handleCreate}>
+          <Button variant="primary" onClick={handleCreate} className="me-2">
             <FaPlus /> Nueva Venta
           </Button>
+          {getUserInfo()?.rol === 'admin' && (
+            <Button variant="info" onClick={() => setShowReportes(true)}>
+              <FaChartLine /> Ver Reportes
+            </Button>
+          )}
         </Col>
       </Row>
 
@@ -378,6 +370,7 @@ const VentasCRUD = () => {
         </tbody>
       </Table>
 
+      {/* Modal de Venta */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>
@@ -387,36 +380,34 @@ const VentasCRUD = () => {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            <Row>
+            <Row className="mb-3">
               <Col md={6}>
-                <Form.Group className="mb-3">
+                <Form.Group>
+                  <Form.Label>Vendedor</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={currentVenta.nombresVendedor}
+                    disabled
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
                   <Form.Label>Fecha</Form.Label>
                   <Form.Control
                     type="datetime-local"
                     name="fechaVenta"
                     value={currentVenta.fechaVenta.split('.')[0]}
                     onChange={handleInputChange}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Vendedor</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={currentVenta.nombresVendedor}
-                    disabled
-                    readOnly
                   />
                 </Form.Group>
               </Col>
             </Row>
 
             <div className="border rounded p-3 mb-3">
-              <h6 className="mb-3">Agregar Productos</h6>
-              <Row className="align-items-end">
-                <Col md={5}>
+              <h6>Agregar Producto</h6>
+              <Row>
+                <Col md={6}>
                   <Form.Group className="mb-3">
                     <Form.Label>Producto</Form.Label>
                     <Form.Select
@@ -425,12 +416,9 @@ const VentasCRUD = () => {
                       onChange={handleProductoChange}
                     >
                       <option value="">Seleccione un producto</option>
-                      {productos && productos.map((producto, index) => (
-                        <option 
-                          key={`producto-${producto?.idProducto || index}`} 
-                          value={producto?.idProducto || ''}
-                        >
-                          {producto?.nombre || 'Producto sin nombre'} - ${(producto?.precio || 0).toLocaleString('es-CO')}
+                      {productos.map(producto => (
+                        <option key={producto.idProducto} value={producto.idProducto}>
+                          {producto.nombre} - ${producto.precio}
                         </option>
                       ))}
                     </Form.Select>
@@ -445,20 +433,14 @@ const VentasCRUD = () => {
                       value={currentProducto.cantidad}
                       onChange={handleProductoChange}
                       min="1"
-                      step="1"
-                      onKeyPress={(e) => {
-                        if (!/[0-9]/.test(e.key)) {
-                          e.preventDefault();
-                        }
-                      }}
                     />
                   </Form.Group>
                 </Col>
-                <Col md={3}>
+                <Col md={2} className="d-flex align-items-end">
                   <Button 
-                    variant="secondary" 
+                    variant="success" 
+                    onClick={handleAgregarProducto}
                     className="w-100 mb-3"
-                    onClick={handleAddProducto}
                   >
                     <FaPlus /> Agregar
                   </Button>
@@ -467,35 +449,21 @@ const VentasCRUD = () => {
             </div>
 
             <div className="border rounded p-3 mb-3">
-              <h6 className="d-flex justify-content-between align-items-center mb-3">
-                <span>Productos en la Venta</span>
-                <Badge bg="primary">
-                  Total: ${currentVenta.montoTotal.toLocaleString('es-CO')}
-                </Badge>
-              </h6>
-              <ListGroup variant="flush" style={{maxHeight: '200px', overflowY: 'auto'}}>
+              <h6>Productos en la Venta</h6>
+              <ListGroup>
                 {currentVenta.productos.map((producto, idx) => (
-                  <ListGroup.Item 
-                    key={idx}
-                    className="d-flex justify-content-between align-items-center"
-                  >
+                  <ListGroup.Item key={idx} className="d-flex justify-content-between align-items-center">
                     <div>
-                      <strong>{producto.nombre}</strong>
-                      <br />
-                      <small className="text-muted">
-                        {producto.cantidad} x ${producto.precioUnitario.toLocaleString('es-CO')}
-                      </small>
+                      {producto.nombre} x {producto.cantidad}
                     </div>
-                    <div className="text-end">
-                      <div className="mb-1">
-                        <Badge bg="secondary">
-                          ${producto.subtotal.toLocaleString('es-CO')}
-                        </Badge>
-                      </div>
+                    <div>
+                      <span className="me-3">
+                        ${producto.subtotal.toLocaleString('es-CO')}
+                      </span>
                       <Button 
                         variant="danger" 
                         size="sm"
-                        onClick={() => handleRemoveProducto(producto.productoId)}
+                        onClick={() => handleQuitarProducto(producto.productoId)}
                       >
                         <FaTrash />
                       </Button>
@@ -503,14 +471,17 @@ const VentasCRUD = () => {
                   </ListGroup.Item>
                 ))}
               </ListGroup>
+              <div className="text-end mt-3">
+                <h5>Total: ${currentVenta.montoTotal.toLocaleString('es-CO')}</h5>
+              </div>
             </div>
 
-            <div className="text-end mt-3">
-              <Button variant="secondary" className="me-2" onClick={() => setShowModal(false)}>
+            <div className="text-end">
+              <Button variant="secondary" onClick={() => setShowModal(false)} className="me-2">
                 Cancelar
               </Button>
               <Button variant="primary" type="submit">
-                {isEditing ? 'Actualizar' : 'Registrar'} Venta
+                {isEditing ? 'Actualizar' : 'Crear'} Venta
               </Button>
             </div>
           </Form>
@@ -518,17 +489,14 @@ const VentasCRUD = () => {
       </Modal>
 
       {/* Modal de Ticket */}
-      <TicketVenta 
-        venta={selectedVenta}
+      <TicketVenta
         show={showTicket}
-        onHide={() => {
-          setShowTicket(false);
-          setSelectedVenta(null);
-        }}
+        onHide={() => setShowTicket(false)}
+        venta={selectedVenta}
       />
 
       {/* Modal de Reportes */}
-      <ReportesVentas 
+      <ReportesVentas
         show={showReportes}
         onHide={() => setShowReportes(false)}
       />

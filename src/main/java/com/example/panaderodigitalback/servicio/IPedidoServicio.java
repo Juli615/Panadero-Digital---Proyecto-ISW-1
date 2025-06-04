@@ -12,6 +12,9 @@ public interface IPedidoServicio {
     // Buscar un pedido por ID
     Pedido buscarPedidoPorId(String id);
 
+    // Buscar pedidos por proveedor
+    List<Pedido> buscarPedidosPorProveedor(String proveedorId);
+
     // Guardar pedido
     Pedido guardarPedido(Pedido pedido);
 

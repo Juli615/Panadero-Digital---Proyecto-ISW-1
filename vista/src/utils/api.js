@@ -7,9 +7,11 @@ export const api = {
     },
 
     async handleResponse(response) {
-        if (response.status === 403) {
-            // Si recibimos un 403, el token podría ser inválido
+        if (response.status === 401 || response.status === 403) {
+            // Si recibimos un 401 o 403, el token es inválido o expiró
             localStorage.removeItem('token');
+            localStorage.removeItem('userInfo');
+            window.location.href = '/login';
             throw new Error('Sesión expirada o inválida');
         }
         if (!response.ok) {
@@ -48,6 +50,39 @@ export const api = {
             return await api.handleResponse(response);
         } catch (error) {
             console.error(`Error en POST ${endpoint}:`, error);
+            throw error;
+        }
+    },
+
+    put: async (endpoint, data) => {
+        try {
+            const response = await fetch(`${BASE_URL}${endpoint}`, {
+                method: 'PUT',
+                headers: {
+                    ...api.getAuthHeader(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            return await api.handleResponse(response);
+        } catch (error) {
+            console.error(`Error en PUT ${endpoint}:`, error);
+            throw error;
+        }
+    },
+
+    delete: async (endpoint) => {
+        try {
+            const response = await fetch(`${BASE_URL}${endpoint}`, {
+                method: 'DELETE',
+                headers: {
+                    ...api.getAuthHeader(),
+                    'Content-Type': 'application/json'
+                }
+            });
+            return await api.handleResponse(response);
+        } catch (error) {
+            console.error(`Error en DELETE ${endpoint}:`, error);
             throw error;
         }
     },

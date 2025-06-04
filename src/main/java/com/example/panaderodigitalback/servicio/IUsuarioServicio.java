@@ -17,4 +17,7 @@ public interface IUsuarioServicio {
 
     // Eliminar usuario por id
     void eliminarUsuario(String id);
+
+    // Verificar si existe un usuario con el correo electrónico dado
+    boolean existeCorreoElectronico(String correoElectronico);
 }

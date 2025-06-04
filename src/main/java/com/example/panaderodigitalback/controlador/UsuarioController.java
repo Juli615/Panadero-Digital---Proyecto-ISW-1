@@ -37,6 +37,16 @@ public class UsuarioController {
     // Los datos se pasan en el cuerpo de la peticion
     @PostMapping("/agregar")
     public ResponseEntity<Usuario> agregarUsuario(@RequestBody Usuario usuario) {
+        // Validar que el rol sea vendedor o proveedor
+        if (usuario.getRol() != Usuario.Rol.vendedor && usuario.getRol() != Usuario.Rol.proveedor) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Validar que el correo electrónico no esté ya registrado
+        if (usuarioServicio.existeCorreoElectronico(usuario.getCorreoElectronico())) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         Usuario nuevoUsuario = usuarioServicio.guardarUsuario(usuario);
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }

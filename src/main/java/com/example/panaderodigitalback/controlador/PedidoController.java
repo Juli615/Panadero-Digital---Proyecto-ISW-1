@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pedidos")
+@CrossOrigin(origins = "*")
 public class PedidoController {
 
     @Autowired
@@ -28,9 +29,15 @@ public class PedidoController {
         return pedidoServicio.buscarPedidoPorId(id);
     }
 
+    // Buscar pedidos por proveedor
+    @GetMapping("/proveedor/{proveedorId}")
+    public List<Pedido> buscarPedidosPorProveedor(@PathVariable("proveedorId") String proveedorId) {
+        return pedidoServicio.buscarPedidosPorProveedor(proveedorId);
+    }
+
     // Agregar un pedido
     // Los datos se pasan en el cuerpo de la peticion
-   @PostMapping("/agregar")
+    @PostMapping("/agregar")
     public ResponseEntity<Pedido> agregarPedido(@RequestBody Pedido pedido) {
         Pedido nuevoPedido = pedidoServicio.guardarPedido(pedido);
         return new ResponseEntity<>(nuevoPedido, HttpStatus.CREATED);

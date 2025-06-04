@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PedidoServicio implements IPedidoServicio{
@@ -21,6 +22,13 @@ public class PedidoServicio implements IPedidoServicio{
     @Override
     public Pedido buscarPedidoPorId(String id) {
         return pedidoRepositorio.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Pedido> buscarPedidosPorProveedor(String proveedorId) {
+        return pedidoRepositorio.findAll().stream()
+                .filter(pedido -> pedido.getProveedorId().equals(proveedorId))
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -14,13 +14,14 @@ import {
 } from 'react-bootstrap';
 import { FaEdit, FaTrash, FaSearch, FaPlus, FaCalendar } from 'react-icons/fa';
 
-const PedidosCRUD = () => {
+const PedidosCRUD = ({ usuarioId }) => {
   // Estados
   const [pedidos, setPedidos] = useState([]);
   const [insumos, setInsumos] = useState([]); // Para seleccionar insumos
   const [proveedores, setProveedores] = useState([]); // Para seleccionar proveedores
   const [showModal, setShowModal] = useState(false);
   const [currentPedido, setCurrentPedido] = useState({
+    usuarioId: usuarioId,
     proveedorId: '',
     nombreProveedor: '',
     estadoPedido: 'pendiente',
@@ -183,6 +184,7 @@ const PedidosCRUD = () => {
   // Abrir modal para crear nuevo pedido
   const handleCreate = () => {
     setCurrentPedido({
+      usuarioId: usuarioId,
       proveedorId: '',
       nombreProveedor: '',
       estadoPedido: 'pendiente',

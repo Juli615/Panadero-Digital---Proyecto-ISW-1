@@ -43,4 +43,9 @@ public class UsuarioServicio implements IUsuarioServicio {
     public void eliminarUsuario(String id) {
         usuarioRepositorio.deleteById(id);
     }
+
+    @Override
+    public boolean existeCorreoElectronico(String correoElectronico) {
+        return usuarioRepositorio.findByCorreoElectronico(correoElectronico).isPresent();
+    }
 }
