@@ -112,10 +112,13 @@ const UsuariosCRUD = () => {
         ? 'http://localhost:8080/api/usuarios/editar'
         : 'http://localhost:8080/api/usuarios/agregar';
 
-      // Si estamos editando y no se ha ingresado una nueva contraseña, la omitimos
-      const usuarioToSend = isEditing && !currentUsuario.password
-        ? { ...currentUsuario, password: undefined }
-        : currentUsuario;
+      // Crear una copia del usuario actual para enviar
+      const usuarioToSend = { ...currentUsuario };
+
+      // Si estamos editando y la contraseña está vacía, la eliminamos del objeto
+      if (isEditing && (!usuarioToSend.password || usuarioToSend.password.trim() === '')) {
+        delete usuarioToSend.password;
+      }
 
       const response = await fetch(url, {
         method: isEditing ? 'PUT' : 'POST',
@@ -125,7 +128,10 @@ const UsuariosCRUD = () => {
         body: JSON.stringify(usuarioToSend)
       });
 
-      if (!response.ok) throw new Error('Error al guardar el usuario');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al guardar el usuario');
+      }
       
       setSuccess(isEditing ? 'Usuario actualizado con éxito' : 'Usuario creado con éxito');
       setShowModal(false);
@@ -324,14 +330,23 @@ const UsuariosCRUD = () => {
             </Row>
 
             <Form.Group className="mb-3">
-              <Form.Label>{isEditing ? 'Nueva Contraseña (dejar en blanco para mantener la actual)' : 'Contraseña'}</Form.Label>
+              <Form.Label>
+                {isEditing ? 'Nueva Contraseña (dejar en blanco para mantener la actual)' : 'Contraseña'}
+                {!isEditing && <span className="text-danger">*</span>}
+              </Form.Label>
               <Form.Control
                 type="password"
                 name="password"
                 value={currentUsuario.password}
                 onChange={handleInputChange}
                 required={!isEditing}
+                placeholder={isEditing ? 'Dejar en blanco para mantener la contraseña actual' : 'Ingrese la contraseña'}
               />
+              {isEditing && (
+                <Form.Text className="text-muted">
+                  Si no desea cambiar la contraseña, deje este campo en blanco.
+                </Form.Text>
+              )}
             </Form.Group>
 
             <div className="text-end mt-3">

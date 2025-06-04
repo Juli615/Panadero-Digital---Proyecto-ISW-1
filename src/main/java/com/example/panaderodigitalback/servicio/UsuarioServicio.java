@@ -26,6 +26,16 @@ public class UsuarioServicio implements IUsuarioServicio {
 
     @Override
     public Usuario guardarUsuario(Usuario usuario) {
+        // Si es una actualización (el usuario ya existe)
+        if (usuario.getId() != null) {
+            Usuario usuarioExistente = buscarUsuarioPorId(usuario.getId());
+            if (usuarioExistente != null) {
+                // Si la contraseña viene vacía o null, mantener la contraseña existente
+                if (usuario.getPassword() == null || usuario.getPassword().trim().isEmpty()) {
+                    usuario.setPassword(usuarioExistente.getPassword());
+                }
+            }
+        }
         return usuarioRepositorio.save(usuario);
     }
 
