@@ -12,8 +12,9 @@ import {
   ListGroup,
   Badge
 } from 'react-bootstrap';
-import { FaEdit, FaTrash, FaSearch, FaPlus, FaShoppingCart, FaCalculator, FaReceipt } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaSearch, FaPlus, FaShoppingCart, FaCalculator, FaReceipt, FaChartLine } from 'react-icons/fa';
 import TicketVenta from './TicketVenta';
+import ReportesVentas from './ReportesVentas';
 
 const VentasCRUD = () => {
   // Estados
@@ -40,6 +41,7 @@ const VentasCRUD = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showTicket, setShowTicket] = useState(false);
   const [selectedVenta, setSelectedVenta] = useState(null);
+  const [showReportes, setShowReportes] = useState(false);
 
   // Estados de venta disponibles
   const estadosVenta = ['completada', 'cancelada'];
@@ -309,6 +311,9 @@ const VentasCRUD = () => {
           </InputGroup>
         </Col>
         <Col md={6} className="text-end">
+          <Button variant="info" className="me-2" onClick={() => setShowReportes(true)}>
+            <FaChartLine className="me-1" /> Reportes
+          </Button>
           <Button variant="primary" onClick={handleCreate}>
             <FaPlus /> Nueva Venta
           </Button>
@@ -520,6 +525,12 @@ const VentasCRUD = () => {
           setShowTicket(false);
           setSelectedVenta(null);
         }}
+      />
+
+      {/* Modal de Reportes */}
+      <ReportesVentas 
+        show={showReportes}
+        onHide={() => setShowReportes(false)}
       />
     </Container>
   );
