@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Alert, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
+import bakeryLogo from '../assets/bakery-logo.svg';
 
 const Login = ({ setToken, setUserData }) => {
   const navigate = useNavigate();
@@ -74,6 +75,18 @@ const Login = ({ setToken, setUserData }) => {
 
   return (
     <Container className="mt-5">
+      <Row className="justify-content-center text-center mb-4">
+        <Col md={6}>
+          <Image 
+            src={bakeryLogo} 
+            alt="Panadería Digital Logo" 
+            fluid 
+            style={{ maxWidth: '200px', marginBottom: '20px' }}
+          />
+          <h1 className="display-4 mb-3">Panadería Digital</h1>
+          <p className="lead text-muted">¡Bienvenido a tu sistema de gestión panadero!</p>
+        </Col>
+      </Row>
       <Row className="justify-content-center">
         <Col md={6}>
           <div className="bg-white p-4 rounded shadow">

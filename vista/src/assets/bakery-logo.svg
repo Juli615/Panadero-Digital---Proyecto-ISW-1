@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Fondo del logo -->
+    <circle cx="256" cy="256" r="256" fill="#FFF3E0"/>
+    
+    <!-- Pan -->
+    <path d="M256 140C176 140 112 180 112 230C112 280 176 300 256 300C336 300 400 280 400 230C400 180 336 140 256 140Z" fill="#8D6E63"/>
+    <path d="M256 160C196 160 148 190 148 230C148 270 196 285 256 285C316 285 364 270 364 230C364 190 316 160 256 160Z" fill="#A1887F"/>
+    
+    <!-- Detalles del pan -->
+    <path d="M220 200C220 213.3 213.3 224 205 224C196.7 224 190 213.3 190 200C190 186.7 196.7 176 205 176C213.3 176 220 186.7 220 200Z" fill="#8D6E63"/>
+    <path d="M280 210C280 223.3 273.3 234 265 234C256.7 234 250 223.3 250 210C250 196.7 256.7 186 265 186C273.3 186 280 196.7 280 210Z" fill="#8D6E63"/>
+    <path d="M340 200C340 213.3 333.3 224 325 224C316.7 224 310 213.3 310 200C310 186.7 316.7 176 325 176C333.3 176 340 186.7 340 200Z" fill="#8D6E63"/>
+    
+    <!-- Vapor -->
+    <path d="M200 120C200 120 210 100 230 100C250 100 260 120 260 120" stroke="#BDBDBD" stroke-width="8" stroke-linecap="round"/>
+    <path d="M260 110C260 110 270 90 290 90C310 90 320 110 320 110" stroke="#BDBDBD" stroke-width="8" stroke-linecap="round"/>
+    
+    <!-- Texto -->
+    <path d="M156 350H356" stroke="#5D4037" stroke-width="12" stroke-linecap="round"/>
+    <path d="M186 380H326" stroke="#5D4037" stroke-width="12" stroke-linecap="round"/>
+</svg> 

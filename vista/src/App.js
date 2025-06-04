@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
-import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, Container, Dropdown, Image } from 'react-bootstrap';
 import { FaUser, FaBox, FaShoppingCart, FaUsers, FaClipboardList, FaCog, FaSignOutAlt, FaTruck } from 'react-icons/fa';
 import Login from './components/Login';
 import Registro from './components/Registro';
@@ -11,6 +11,7 @@ import PedidosProveedor from './components/PedidosProveedor';
 import UsuariosCRUD from './components/UsuariosCRUD';
 import VentasCRUD from './components/VentasCRUD';
 import ProtectedRoute from './components/ProtectedRoute';
+import bakeryLogo from './assets/bakery-logo.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const NavItem = ({ to, icon: Icon, children, disabled }) => {
@@ -88,8 +89,13 @@ const App = () => {
             <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 shadow-sm">
               <Container fluid>
                 <Navbar.Brand className="d-flex align-items-center gap-2">
-                  <FaCog className="spin-hover" />
-                  Panadero Digital
+                  <Image 
+                    src={bakeryLogo} 
+                    alt="Panadería Digital Logo" 
+                    height="40" 
+                    className="d-inline-block align-top"
+                  />
+                  <span className="ms-2">Panadería Digital</span>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
