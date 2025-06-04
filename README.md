@@ -113,21 +113,5 @@ npm start
 - **Reportes**: Visualización de estadísticas de ventas, productos más vendidos y estado del inventario
 - **Usuarios**: Administración de usuarios y roles del sistema
 
-## Contribución 🤝
-Si deseas contribuir al proyecto:
-1. Haz un Fork del repositorio
-2. Crea una nueva rama (`git checkout -b feature/nueva-caracteristica`)
-3. Realiza tus cambios y haz commit (`git commit -am 'Agrega nueva característica'`)
-4. Sube los cambios a tu fork (`git push origin feature/nueva-caracteristica`)
-5. Crea un Pull Request
-
-## Licencia 📄
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
-
-## Contacto 📧
-Para más información o consultas, por favor contactar a:
-- Equipo de Desarrollo de Panadero Digital
-- Email: [correo_de_contacto]
-
 ---
-Desarrollado con ❤️ por el equipo de Panadero Digital
+Desarrollado con ❤️ por Jhon Anderson Vargas y Julian David Perez para la asignatura de Ingenieria De Software I 
